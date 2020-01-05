@@ -1,0 +1,23 @@
+{
+  "name": "@rupertofly/capture",
+  "version": "0.1.0",
+  "description": "a capture app by me",
+  "main": "index.js",
+  "repository": "git@github.com:Rupertofly/RubyQCapture.git",
+  "author": "Ruby Quail",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0",
+    "yargs": "^15.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.2",
+    "@types/socket.io": "^2.1.4",
+    "@types/yargs": "^13.0.4"
+  },
+  "bin": {
+    "rubyqcanvas": "./bin/rubyqcanvas"
+  }
+}

@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+let yargs = require('yargs');
+let cs = require('../src/index');
+console.log(cs);
+
+let args = yargs.argv;
+cs.default(args._[0]);
