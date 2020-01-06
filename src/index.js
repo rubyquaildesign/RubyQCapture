@@ -18,7 +18,12 @@ var recordServer = function (port) {
         client.on('join', function (d) { return client.emit("welcome!"); });
     });
     var CapApp = new CaptureApp_1.default();
-    CapApp.start({ height: 300, width: 300, maxLength: 10 });
+    CapApp.start({ height: 12, width: 20, maxLength: 100, frameRate: 30 });
+    var testData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKElEQVQ4jWNgYGD4Twzu6FhFFGYYNXDUwGFpIAk2E4dHDRw1cDgaCAASFOffhEIO';
+    for (var i = 0; i < 128; i++) {
+        CapApp.capture(testData);
+    }
+    CapApp.stop(true);
 };
 exports.default = recordServer;
 //# sourceMappingURL=index.js.map
