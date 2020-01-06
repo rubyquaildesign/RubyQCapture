@@ -9,10 +9,6 @@ const recordServer = (port: number) => {
   server.listen(port);
   console.log(`server started`);
 
-  io.on('connection', client => {
-    console.log(`client:${client} connected`);
-    client.on('join', d => client.emit(`welcome!`));
-  });
   const CapApp = new CaptureApp();
   CapApp.start({ height: 12, width: 20, maxLength: 100, frameRate: 30 });
   const testData =
@@ -21,6 +17,14 @@ const recordServer = (port: number) => {
     CapApp.capture(testData);
   }
   CapApp.stop(true);
+  io.on('connection', client => {
+    console.log(`client:${client} connected`);
+    client.on('join', () => client.emit(`welcome!`));
+    client.on('start', data => CapApp.start(data));
+    client.on('capture', data => CapApp.capture(data));
+    client.on('stop', data => CapApp.stop(data));
+    client.on('save', () => CapApp.save());
+  });
 };
 
 export default recordServer;

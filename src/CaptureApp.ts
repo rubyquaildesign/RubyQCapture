@@ -50,6 +50,7 @@ class CaptureApp {
     lengthIsFrames = false,
     name,
   }: startArgs) => {
+    this.frameCount = 0;
     this.width = width;
     this.height = height;
     this.frameRate = frameRate || this.frameRate;
@@ -57,12 +58,12 @@ class CaptureApp {
     this.name = name || this.name;
     this.folder = process.env.HOME + `/.rubyqcapture`;
     // check folder
-    const folderExists = isDirSync(this.folder);
-    if (!folderExists) fs.mkdirSync(this.folder);
-    console.log(`folder: ${isDirSync(this.folder)}`);
-    // clear folder
-    fs.readdirSync(this.folder).map(d => fs.unlinkSync(this.folder + '/' + d));
+    if (!isDirSync(this.folder)) fs.mkdirSync(this.folder);
+    this.clearFolder();
     this.started = true;
+  };
+  private clearFolder = () => {
+    fs.readdirSync(this.folder).map(d => fs.unlinkSync(this.folder + '/' + d));
   };
   public capture = (dataURL: string) => {
     if (!this.started) return;
@@ -79,7 +80,7 @@ class CaptureApp {
     if (!save) return;
     this.save();
   };
-  private save = () => {
+  public save = () => {
     let fm = this.name;
     console.log(exists(`${process.env.HOME}/${fm}.mp4`));
 
@@ -95,6 +96,7 @@ class CaptureApp {
       { cwd: this.folder }
     );
     console.log(`Done!`);
+    this.clearFolder();
   };
 }
 export default CaptureApp;
