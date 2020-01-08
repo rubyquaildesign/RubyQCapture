@@ -11,20 +11,17 @@ const recordServer = (port: number) => {
   console.log(`server started`);
 
   const CapApp = new CaptureApp();
-  CapApp.start({ height: 12, width: 20, maxLength: 100, frameRate: 30 });
-  const testData =
-    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKElEQVQ4jWNgYGD4Twzu6FhFFGYYNXDUwGFpIAk2E4dHDRw1cDgaCAASFOffhEIO';
-  for (let i = 0; i < 128; i++) {
-    CapApp.capture(testData);
-  }
-  CapApp.stop(true);
   io.on('connection', client => {
-    console.log(`client:${client} connected`);
+    console.log(`client:${client.id} connected`);
     client.on('join', () => client.emit(`welcome!`));
-    client.on('start', data => CapApp.start(data));
-    client.on('capture', data => CapApp.capture(data));
+    client.on('start', data => {
+      console.table(data);
+      CapApp.start(data, client.id);
+    });
+    client.on('capture', data => CapApp.capture(data, client.id));
     client.on('stop', data => CapApp.stop(data));
     client.on('save', () => CapApp.save());
+    client.on('disconnect', () => console.log(`a user disconnected`));
   });
 };
 

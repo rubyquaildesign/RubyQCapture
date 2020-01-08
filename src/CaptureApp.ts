@@ -2,15 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import cp from 'child_process';
 import ut from 'util';
-interface startArgs {
-  width: number;
-  height: number;
-  frameRate?: number;
-  maxLength: number;
-  lengthIsFrames?: boolean;
-  name?: string;
-}
-
+import { startArgs } from './startArgs';
 function exists(path: string) {
   try {
     return !!fs.statSync(path);
@@ -40,21 +32,27 @@ class CaptureApp {
   private maxLength: number = 6;
   private name: string = 'recording';
   private frameCount = 0;
+  private socketID: string = 'x';
   private started = false;
   private folder: string = process.env.HOME + `/.rubyqcapture`;
-  public start = ({
-    width,
-    height,
-    frameRate,
-    maxLength,
-    lengthIsFrames = false,
-    name,
-  }: startArgs) => {
+  public start = (
+    {
+      width,
+      height,
+      frameRate,
+      maxLength,
+      lengthIsFrames = false,
+      name,
+    }: startArgs,
+    sID: string
+  ) => {
+    let setLength = isNaN(maxLength) ? 6 : maxLength;
+    this.socketID = sID;
     this.frameCount = 0;
-    this.width = width;
-    this.height = height;
+    this.width = width || this.width;
+    this.height = height || this.height;
     this.frameRate = frameRate || this.frameRate;
-    this.maxLength = lengthIsFrames ? maxLength : this.frameRate * maxLength;
+    this.maxLength = lengthIsFrames ? setLength : this.frameRate * setLength;
     this.name = name || this.name;
     this.folder = process.env.HOME + `/.rubyqcapture`;
     // check folder
@@ -65,8 +63,9 @@ class CaptureApp {
   private clearFolder = () => {
     fs.readdirSync(this.folder).map(d => fs.unlinkSync(this.folder + '/' + d));
   };
-  public capture = (dataURL: string) => {
+  public capture = (dataURL: string, sID: string) => {
     if (!this.started) return;
+    if (sID !== this.socketID) return;
     const data = dataURL.replace(/^data:image\/\w+;base64,/, '');
     const title = `${this.name}_${this.frameCount
       .toString()
@@ -74,8 +73,13 @@ class CaptureApp {
     const buf = Buffer.from(data, 'base64');
     fs.writeFileSync(this.folder + '/' + title, buf);
     this.frameCount++;
+    process.stdout.write(`${this.frameCount} is less then ${this.maxLength}\r`);
+    if (this.frameCount > this.maxLength) {
+      this.stop();
+    }
   };
   public stop = (save: boolean = true) => {
+    console.log(`stopped`);
     this.started = false;
     if (!save) return;
     this.save();
