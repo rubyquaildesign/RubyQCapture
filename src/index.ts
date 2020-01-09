@@ -18,7 +18,10 @@ const recordServer = (port: number) => {
       console.table(data);
       CapApp.start(data, client.id);
     });
-    client.on('capture', data => CapApp.capture(data, client.id));
+    client.on('capture', (data, cb) => {
+      CapApp.capture(data, client.id);
+      cb(true);
+    });
     client.on('stop', data => CapApp.stop(data));
     client.on('save', () => CapApp.save());
     client.on('disconnect', () => console.log(`a user disconnected`));
