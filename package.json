@@ -1,6 +1,6 @@
 {
   "name": "@rupertofly/capture",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "a capture app by me",
   "main": "index.js",
   "repository": "git@github.com:Rupertofly/RubyQCapture.git",
