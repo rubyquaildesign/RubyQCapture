@@ -20,7 +20,7 @@ const recordServer = (port: number) => {
     });
     client.on('capture', (data, cb) => {
       CapApp.capture(data, client.id);
-      cb(true);
+      cb();
     });
     client.on('stop', data => CapApp.stop(data));
     client.on('save', () => CapApp.save());

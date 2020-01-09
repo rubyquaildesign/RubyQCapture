@@ -19,9 +19,12 @@ const recordServer = (port) => {
         client.on('join', () => client.emit(`welcome!`));
         client.on('start', data => {
             console.table(data);
-            CapApp.start(data);
+            CapApp.start(data, client.id);
         });
-        client.on('capture', data => CapApp.capture(data));
+        client.on('capture', (data, cb) => {
+            CapApp.capture(data, client.id);
+            cb();
+        });
         client.on('stop', data => CapApp.stop(data));
         client.on('save', () => CapApp.save());
         client.on('disconnect', () => console.log(`a user disconnected`));

@@ -39,10 +39,12 @@ class CaptureApp {
         this.maxLength = 6;
         this.name = 'recording';
         this.frameCount = 0;
+        this.socketID = 'x';
         this.started = false;
         this.folder = process.env.HOME + `/.rubyqcapture`;
-        this.start = ({ width, height, frameRate, maxLength, lengthIsFrames = false, name, }) => {
+        this.start = ({ width, height, frameRate, maxLength, lengthIsFrames = false, name, }, sID) => {
             let setLength = isNaN(maxLength) ? 6 : maxLength;
+            this.socketID = sID;
             this.frameCount = 0;
             this.width = width || this.width;
             this.height = height || this.height;
@@ -59,8 +61,10 @@ class CaptureApp {
         this.clearFolder = () => {
             fs_1.default.readdirSync(this.folder).map(d => fs_1.default.unlinkSync(this.folder + '/' + d));
         };
-        this.capture = (dataURL) => {
+        this.capture = (dataURL, sID) => {
             if (!this.started)
+                return;
+            if (sID !== this.socketID)
                 return;
             const data = dataURL.replace(/^data:image\/\w+;base64,/, '');
             const title = `${this.name}_${this.frameCount
