@@ -42,7 +42,7 @@ class CaptureApp {
         this.socketID = 'x';
         this.started = false;
         this.folder = process.env.HOME + `/.rubyqcapture`;
-        this.start = ({ width, height, frameRate, maxLength, lengthIsFrames = false, name, }, sID) => {
+        this.start = ({ width, height, frameRate, maxLength, lengthIsFrames = false, name }, sID) => {
             let setLength = isNaN(maxLength) ? 6 : maxLength;
             this.socketID = sID;
             this.frameCount = 0;
@@ -59,7 +59,7 @@ class CaptureApp {
             this.started = true;
         };
         this.clearFolder = () => {
-            fs_1.default.readdirSync(this.folder).map(d => fs_1.default.unlinkSync(this.folder + '/' + d));
+            fs_1.default.readdirSync(this.folder).map((d) => fs_1.default.unlinkSync(this.folder + '/' + d));
         };
         this.capture = (dataURL, sID) => {
             if (!this.started)
@@ -67,13 +67,11 @@ class CaptureApp {
             if (sID !== this.socketID)
                 return;
             const data = dataURL.replace(/^data:image\/\w+;base64,/, '');
-            const title = `${this.name}_${this.frameCount
-                .toString()
-                .padStart(6, '0')}.png`;
+            const title = `${this.name}_${this.frameCount.toString().padStart(6, '0')}.png`;
             const buf = Buffer.from(data, 'base64');
             fs_1.default.writeFileSync(this.folder + '/' + title, buf);
             this.frameCount++;
-            process.stdout.write(`${this.frameCount} is less then ${this.maxLength}\r`);
+            process.stdout.write(`\r${this.frameCount} is less then ${this.maxLength}`);
             if (this.frameCount > this.maxLength) {
                 this.stop();
             }
@@ -91,9 +89,7 @@ class CaptureApp {
             while (exists(`${process.env.HOME}/${fm}.mp4`)) {
                 fm += '_';
             }
-            child_process_1.default.execSync(`ffmpeg -r ${this.frameRate} -s ${this.width +
-                'x' +
-                this.height} -v fatal -f image2 -pattern_type sequence -i "${this.name}_%06d.png" -pix_fmt yuv420p -crf 17 -vcodec libx264 ../${fm}.mp4`, { cwd: this.folder });
+            child_process_1.default.execSync(`ffmpeg -r ${this.frameRate} -s ${this.width + 'x' + this.height} -v info -f image2 -pattern_type sequence -i "${this.name}_%06d.png" -pix_fmt yuv420p -crf 12 -vcodec libx264 ../${fm}.mp4`, { cwd: this.folder });
             console.log(`Done!`);
             this.clearFolder();
         };

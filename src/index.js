@@ -8,9 +8,9 @@ const http_1 = __importDefault(require("http"));
 const socket_io_1 = __importDefault(require("socket.io"));
 const CaptureApp_1 = __importDefault(require("./CaptureApp"));
 const recordServer = (port) => {
-    const app = express_1.default();
+    const app = (0, express_1.default)();
     const server = http_1.default.createServer(app);
-    const io = socket_io_1.default(server);
+    const io = (0, socket_io_1.default)(server);
     server.listen(port);
     console.log(`server started`);
     const CapApp = new CaptureApp_1.default();
