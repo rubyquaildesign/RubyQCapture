@@ -1,13 +1,13 @@
 import exp from 'express';
 import http from 'http';
-import sio from 'socket.io';
+import {Server} from 'socket.io';
 import CaptureApp from './CaptureApp';
 const recordServer = (port: number) => {
   const app = exp();
-  const server = http.createServer(app);
-  const io = sio(server);
+  const httpServer = http.createServer(app);
+  const io = new Server(httpServer,{cors:{origin:'*'}});
 
-  server.listen(port);
+  httpServer.listen(port);
   console.log(`server started`);
 
   const CapApp = new CaptureApp();
