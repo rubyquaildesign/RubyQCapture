@@ -5,7 +5,12 @@ import CaptureApp from './CaptureApp';
 const recordServer = (port: number) => {
   const app = exp();
   const httpServer = http.createServer(app);
-  const io = new Server(httpServer,{cors:{origin:false}});
+  const io = new Server(httpServer,{cors:{
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204
+  }});
 
   httpServer.listen(port);
   console.log(`server started`);
