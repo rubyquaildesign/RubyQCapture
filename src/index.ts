@@ -1,18 +1,15 @@
-import exp from 'express';
-import http from 'http';
+
 import {Server} from 'socket.io';
 import CaptureApp from './CaptureApp';
 const recordServer = (port: number) => {
-  const app = exp();
-  const httpServer = http.createServer(app);
-  const io = new Server(httpServer,{cors:{
+
+  const io = new Server({cors:{
     "origin": "*",
     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
     "preflightContinue": false,
     "optionsSuccessStatus": 204
-  }});
+  },serveClient:false});
 
-  httpServer.listen(port);
   console.log(`server started`);
 
   const CapApp = new CaptureApp();
@@ -31,6 +28,8 @@ const recordServer = (port: number) => {
     client.on('save', () => CapApp.save());
     client.on('disconnect', () => console.log(`a user disconnected`));
   });
+  io.
+  io.listen(port)
 };
 
 export default recordServer;
