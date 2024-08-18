@@ -3,23 +3,49 @@
   "version": "0.10.5",
   "description": "a capture app by me",
   "main": "index.js",
+  "type": "module",
   "repository": "git@github.com:Rupertofly/RubyQCapture.git",
   "author": "Ruby Quail",
   "license": "MIT",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    },
+    "./client": {
+      "import": "./dist/client.js",
+      "types": "./dist/client.d.ts"
+    }
+  },
   "scripts": {
-    "prepare": "tsc"
+    "build": "tsup",
+    "prepare": "tsup"
   },
   "dependencies": {
-    "express": "^4.17.1",
-    "socket.io": "^4",
-    "yargs": "^15.1.0"
+    "@std/cli": "npm:@jsr/std__cli@^1.0.3",
+    "@std/encoding": "npm:@jsr/std__encoding@^1.0.1",
+    "@std/ulid": "npm:@jsr/std__ulid@1.0.0-rc.4",
+    "eslint-config-standard-typescript-prettier": "^6.0.0",
+    "sharp": "^0.33.5",
+    "ws": "^8.16.0",
+    "yargs": "^17.7.2",
+    "zod": "^3.23.8",
+    "zod-validation-error": "^3.3.1"
   },
   "devDependencies": {
-    "@types/express": "^4.17.2",
-    "@types/yargs": "^13.0.4",
-    "typescript": "^4.7.4"
+    "@types/node": "^20.10.6",
+    "@types/pngjs": "^6.0.5",
+    "@types/ws": "^8.5.10",
+    "@types/yargs": "^17.0.33",
+    "jsr": "^0.13.1",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4"
   },
   "bin": {
-    "rubyqcanvas": "./bin/rubyqcanvas"
+    "rubyqcanvas": "dist/cli.js"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "typescript@5.5.4": "patches/typescript@5.5.4.patch"
+    }
   }
 }

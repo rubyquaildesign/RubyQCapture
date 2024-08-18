@@ -1,35 +1,92 @@
+import { WebSocketServer } from 'ws';
+import CaptureApp from './CaptureApplication';
 
-import {Server} from 'socket.io';
-import CaptureApp from './CaptureApp';
+import * as S from './schemas';
+import type * as zod from 'zod';
+import { fromError } from 'zod-validation-error';
+import isDataURI from './dataURI';
+const response = JSON.stringify({ type: 'ready' } satisfies zod.infer<
+	typeof S.readyMessage
+>);
 const recordServer = (port: number) => {
+	const io = new WebSocketServer({
+		port,
+	});
 
-  const io = new Server({cors:{
-    "origin": "*",
-    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-    "preflightContinue": false,
-    "optionsSuccessStatus": 204
-  },serveClient:false});
+	console.log(`server started`);
 
-  console.log(`server started`);
+	let capApp: CaptureApp;
+	io.on('connection', async (client) => {
+		console.log(`client:${client.url} connected`);
+		client.on('error', console.error);
+		client.on('message', async (data) => {
+			const messageData = JSON.parse(data.toString('utf-8'));
+			const messageResult = S.MessageSchema.safeParse(messageData);
+			if (messageResult.success === false) {
+				const responseMessage = fromError(messageResult.error).toString();
+				const reply = {
+					type: 'error',
+					data: responseMessage,
+				} satisfies zod.infer<typeof S.errorMessage>;
+				client.send(JSON.stringify(reply));
+				return;
+			}
+			const msg = messageResult.data;
+			if (msg.type === 'start') {
+				console.table(msg.data);
+				capApp = new CaptureApp(msg.data);
+				await capApp.readyPromise;
+				client.send(response);
+				return;
+			}
+			if (!capApp) {
+				const reply = {
+					type: 'error',
+					data: 'CaptureApplication Not Started',
+				} satisfies zod.infer<typeof S.errorMessage>;
+				client.send(JSON.stringify(reply));
+				return;
+			}
+			if (msg.type === 'capture') {
+				const data = msg.data;
+				const isPngUrl = isDataURI(data);
+				if (isPngUrl !== (capApp.type === 'pngUrl')) {
+					const reply = {
+						type: 'error',
+						data: 'Incorrect capture format',
+					} satisfies zod.infer<typeof S.errorMessage>;
+					client.send(JSON.stringify(reply));
+					return;
+				}
+				const success = await capApp
+					.capture(data)
+					.catch(() => {
+						const reply = {
+							type: 'error',
+							data: 'capture failed',
+						} satisfies zod.infer<typeof S.errorMessage>;
+						client.send(JSON.stringify(reply));
+						return false;
+					})
+					.then(() => true);
+				if (success) {
+					client.send(response);
+				}
+				return;
+			}
 
-  const CapApp = new CaptureApp();
-  io.on('connection', client => {
-    console.log(`client:${client.id} connected`);
-    client.on('join', () => client.emit(`welcome!`));
-    client.on('start', data => {
-      console.table(data);
-      CapApp.start(data, client.id);
-    });
-    client.on('capture', (data, cb) => {
-      CapApp.capture(data, client.id);
-      cb();
-    });
-    client.on('stop', data => CapApp.stop(data));
-    client.on('save', () => CapApp.save());
-    client.on('disconnect', () => console.log(`a user disconnected`));
-  });
-  io.
-  io.listen(port)
+			if (msg.type === 'stop') {
+				await capApp.stop(msg.data.save);
+				client.send(response);
+				return;
+			}
+			const reply = {
+				type: 'error',
+				data: 'invalid message sent',
+			} satisfies zod.infer<typeof S.errorMessage>;
+			client.send(JSON.stringify(reply));
+		});
+	});
 };
 
 export default recordServer;

@@ -1,8 +1,0 @@
-#!/usr/bin/env node
-let yargs = require('yargs');
-let cs = require('../src/index');
-console.log(cs);
-
-let port = yargs.argv._[0];
-if (port < 1000 || port > 9999) port = 2469;
-cs.default(port);
