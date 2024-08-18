@@ -42,6 +42,10 @@ export const bufferDataMessage = z.object({
 	type: z.literal('capture'),
 	data: z.string().base64(),
 });
+export const DataMessage = z.object({
+	type: z.literal('capture'),
+	data: z.string(),
+});
 export const stopMessage = z.object({
 	type: z.literal('stop'),
 	data: z
@@ -55,6 +59,5 @@ export const MessageSchema = z.discriminatedUnion('type', [
 	readyMessage,
 	errorMessage,
 	stopMessage,
-	bufferDataMessage,
-	pngUrlDataMessage,
+	DataMessage,
 ]);
