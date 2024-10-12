@@ -21,30 +21,19 @@
     "prepare": "tsup"
   },
   "dependencies": {
-    "@std/encoding": "npm:@jsr/std__encoding@^1.0.1",
+    "@img/sharp-wasm32": "^0.33.5",
+    "@std/encoding": "npm:@jsr/std__encoding@^1.0.5",
+    "@std/msgpack": "npm:@jsr/std__msgpack@^1.0.2",
     "@std/ulid": "npm:@jsr/std__ulid@1.0.0-rc.4",
-    "eslint-config-standard-typescript-prettier": "^6.0.0",
+    "@types/pako": "^2.0.3",
+    "pako": "^2.1.0",
     "sharp": "^0.33.5",
-    "ws": "^8.16.0",
-    "yargs": "^17.7.2",
+    "websocket-as-promised": "^3.0.0",
     "zod": "^3.23.8",
-    "zod-validation-error": "^3.3.1"
+    "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
-    "@types/node": "^20.10.6",
-    "@types/pngjs": "^6.0.5",
-    "@types/ws": "^8.5.10",
-    "@types/yargs": "^17.0.33",
-    "jsr": "^0.13.1",
-    "tsup": "^8.2.4",
-    "typescript": "^5.5.4"
-  },
-  "bin": {
-    "rubyqcanvas": "dist/cli.js"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "typescript@5.5.4": "patches/typescript@5.5.4.patch"
-    }
+    "@webgpu/types": "^0.1.48",
+    "vite": "^5.4.8"
   }
 }

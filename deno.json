@@ -1,0 +1,27 @@
+{
+	"name": "@rubyquaildesign/capture",
+	"version": "2.0.0",
+	"exports": {
+		".": "./src/client.ts",
+		"./server": "./src/cli.ts"
+	},
+	"compilerOptions": {
+		"lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"],
+		"types": ["@types/pako","@webgpu/types"]
+	},
+	"fmt": {
+		"useTabs": true,
+		"singleQuote": true,
+		"lineWidth": 80
+	},
+	"nodeModulesDir": "auto",
+	"license": "MIT",
+	"imports": {
+		"@deno-plc/vite-plugin-deno": "jsr:@deno-plc/vite-plugin-deno@^2.1.6",
+		"@std/cli": "jsr:@std/cli@^1.0.6",
+		"@std/encoding": "jsr:@std/encoding@^1.0.5",
+		"@std/msgpack": "jsr:@std/msgpack@^1.0.2",
+		"@std/path": "jsr:@std/path@^1.0.6",
+		"@std/ulid": "jsr:@std/ulid@^1.0.0"
+	}
+}
